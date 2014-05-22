@@ -6,6 +6,11 @@
 #include <termios.h>
 #include <unistd.h>
 
+typedef struct _wind {
+    double direction;
+    double speed;
+} Wind;
+
 int set_serial_options(int fd) {
     struct termios tty;
     memset (&tty, 0, sizeof tty);
@@ -46,7 +51,6 @@ int get_rowind_fd(char* portname) {
 
 void get_line(int ro_fd, char* type, char* line) {
     memset(line, 0, strlen(line));
-    char* new_line = line;
     char c;
     int type_length = strlen(type);
     int i = 0;
@@ -64,20 +68,26 @@ void get_line(int ro_fd, char* type, char* line) {
                     reading_line = 0;
                 }
             }
-            new_line[i] = c;
+            line[i] = c;
             i++;
         }
     }
     tcflush(ro_fd, TCIFLUSH);
 }
 
+Wind* get_wind(int ro_fd) {
+    char line[32];
+    Wind* wind = malloc(sizeof(Wind));
+    get_line(ro_fd, "IIMWV", line);
+    return wind;
+}
+
 int main() {
     int ro_fd = get_rowind_fd("/dev/ttyUSB0");
-    char* line = malloc(35);
     while (1) {
-        get_line(ro_fd, "IIMWV", line);
-        puts(line);
-        sleep(1);
+        Wind* wind = get_wind(ro_fd);
+        free(wind);
+        sleep(0.1);
     }
     return 0;
 }
