@@ -44,19 +44,26 @@ int get_rowind_fd(char* portname) {
     return fd;
 }
 
-void get_IIMWV(int ro_fd, char* line) {
+void get_line(int ro_fd, char* type, char* line) {
     memset(line, 0, strlen(line));
     char* new_line = line;
     char c;
+    int type_length = strlen(type);
     int i = 0;
     int n = 1;
     int reading_line = 0;
-    for (n = 1; n >= 1; n = read (ro_fd, &c, 1)) {
+    for (n = 1; n >= 1; n = read(ro_fd, &c, 1)) {
         if (c == '$') {
             reading_line = 1;
         } else if (c == '\n' && reading_line) {
             break;
         } else if (reading_line) {
+            if (i < type_length) {
+                if (type[i] != c) {
+                    i = -1;
+                    reading_line = 0;
+                }
+            }
             new_line[i] = c;
             i++;
         }
@@ -68,9 +75,9 @@ int main() {
     int ro_fd = get_rowind_fd("/dev/ttyUSB0");
     char* line = malloc(35);
     while (1) {
-        get_IIMWV(ro_fd, line);
+        get_line(ro_fd, "IIMWV", line);
         puts(line);
-        sleep(2);
+        sleep(1);
     }
     return 0;
 }
