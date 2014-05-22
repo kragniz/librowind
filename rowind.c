@@ -1,4 +1,5 @@
 #include <fcntl.h>
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -60,14 +61,16 @@ void get_IIMWV(int ro_fd, char* line) {
             i++;
         }
     }
+    tcflush(ro_fd, TCIFLUSH);
 }
 
 int main() {
     int ro_fd = get_rowind_fd("/dev/ttyUSB0");
     char* line = malloc(35);
     while (1) {
-    get_IIMWV(ro_fd, line);
-    puts(line);
+        get_IIMWV(ro_fd, line);
+        puts(line);
+        sleep(2);
     }
     return 0;
 }
