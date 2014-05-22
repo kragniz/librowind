@@ -51,7 +51,7 @@ int get_rowind_fd(char* portname) {
 
 void get_line(int ro_fd, char* type, char* line) {
     memset(line, 0, strlen(line));
-    char c;
+    char c = '\0';
     int type_length = strlen(type);
     int i = 0;
     int n = 1;
@@ -76,7 +76,7 @@ void get_line(int ro_fd, char* type, char* line) {
 }
 
 Wind* get_wind(int ro_fd) {
-    char line[32];
+    char line[32] = "";
     Wind* wind = malloc(sizeof(Wind));
     get_line(ro_fd, "IIMWV", line);
     return wind;
