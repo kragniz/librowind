@@ -33,14 +33,18 @@ int set_serial_options (int fd) {
         return 0;
 }
 
-int main() {
-    char *portname = "/dev/ttyUSB0";
+int get_rowind_fd(char* portname) {
     int fd = open(portname, O_RDWR | O_NOCTTY | O_SYNC);
     if (fd < 0) {
-        return 1;
+        return -1;
     }
 
     set_serial_options(fd);
+    return fd;
+}
+
+int main() {
+    int fd = get_rowind_fd("/dev/ttyUSB0");
     char c;
     int n = 1;
     while (n >= 1) {
