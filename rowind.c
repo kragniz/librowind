@@ -5,7 +5,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-int set_serial_options (int fd) {
+int set_serial_options(int fd) {
     struct termios tty;
     memset (&tty, 0, sizeof tty);
     if (tcgetattr (fd, &tty) != 0) {
@@ -43,17 +43,31 @@ int get_rowind_fd(char* portname) {
     return fd;
 }
 
-char* get_IIMWV(int ro_fd, char* line) {
+void get_IIMWV(int ro_fd, char* line) {
+    memset(line, 0, strlen(line));
+    char* new_line = line;
     char c;
+    int i = 0;
     int n = 1;
-    while (n >= 1) {
-        n = read (ro_fd, &c, 1);
-        printf(&c);
+    int reading_line = 0;
+    for (n = 1; n >= 1; n = read (ro_fd, &c, 1)) {
+        if (c == '$') {
+            reading_line = 1;
+        } else if (c == '\n' && reading_line) {
+            break;
+        } else if (reading_line) {
+            new_line[i] = c;
+            i++;
+        }
     }
 }
 
 int main() {
     int ro_fd = get_rowind_fd("/dev/ttyUSB0");
-    char* line = malloc(32);
-    puts(get_IIMWV(ro_fd, line));
+    char* line = malloc(35);
+    while (1) {
+    get_IIMWV(ro_fd, line);
+    puts(line);
+    }
+    return 0;
 }
