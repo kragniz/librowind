@@ -39,7 +39,6 @@ int get_rowind_fd(char* portname) {
     if (fd < 0) {
         return -1;
     }
-
     set_serial_options(fd);
     return fd;
 }
@@ -55,6 +54,6 @@ char* get_IIMWV(int ro_fd, char* line) {
 
 int main() {
     int ro_fd = get_rowind_fd("/dev/ttyUSB0");
-    char* line = malloc(30);
+    char* line = malloc(32);
     puts(get_IIMWV(ro_fd, line));
 }
