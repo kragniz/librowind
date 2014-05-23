@@ -11,8 +11,25 @@ typedef struct _wind {
     int valid;
 } Wind;
 
+/*
+ * get_wind: Return current wind data from the sensor.
+ *
+ * wind->direction (double):  The direction of the wind in the range of 0.0-359.9.
+ * wind->speed (double): The speed of the wind in knots.
+ * wind->valid (int): 0 if the data from the sensor is valid and the checksum
+ * passed.
+ *
+ * ro_fd: file descriptor of the serial port used by the sensor. Use
+ * get_rowind_fd to correctly set the configuration.
+ */
 Wind* get_wind(int ro_fd);
+
+/*
+ * get_rowind_fd: Configures the serial port and returns a file descriptor.
+ *
+ * portname: a string containing the path to the serial device. Probably
+ * /dev/ttyUSBX.
+ */
 int get_rowind_fd(char* portname);
-void get_line(int ro_fd, char* type, char* line);
 
 #endif
