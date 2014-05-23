@@ -1,20 +1,8 @@
-#include <fcntl.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <termios.h>
-#include <unistd.h>
+#include "rowind.h"
 
 #define RW_DIRECTION_INDEX 1
 #define RW_SPEED_INDEX 3
 #define RW_VALID_INDEX 5
-
-typedef struct _wind {
-    double direction;
-    double speed;
-    int valid;
-} Wind;
 
 int set_serial_options(int fd) {
     struct termios tty;
