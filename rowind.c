@@ -90,6 +90,20 @@ int checksum(char* line) {
         calculated_sum ^= *ptr;
         ptr++;
     }
+
+    char original_sum[3] = "";
+    if (*ptr == '*') {
+        ptr++;
+        int i;
+        for (i = 0; *ptr != '\0' && *ptr != '\r'; i++, ptr++) {
+            original_sum[i] = *ptr;
+        }
+        original_sum[i+1] = '\0';
+    }
+
+    char calculated_sum_hex[3];
+    sprintf(calculated_sum_hex, "%02X", calculated_sum);
+    return !strcmp(original_sum, calculated_sum_hex);
 }
 
 Wind* get_wind(int ro_fd) {
@@ -97,37 +111,39 @@ Wind* get_wind(int ro_fd) {
     Wind* wind = malloc(sizeof(Wind));
     get_line(ro_fd, "IIMWV", line);
 
-    checksum(line);
+    if (checksum(line)) {
+        char str_direction[8] = "";
+        char str_speed[8] = "";
+        char str_valid = '\0';
 
-    char str_direction[8] = "";
-    char str_speed[8] = "";
-    char str_valid = '\0';
+        char c;
+        int i_tok = 0;
+        int i_str = 0;
+        int end = 0;
+        int j = 0;
+        for (j = 0; j < strlen(line) && !end; j++) {
+            c = line[j];
 
-    char c;
-    int i_tok = 0;
-    int i_str = 0;
-    int end = 0;
-    int j = 0;
-    for (j = 0; j < strlen(line) && !end; j++) {
-        c = line[j];
-
-        if (c == ',') {
-            i_tok++;
-            i_str = 0;
-        } else if (i_tok == RW_DIRECTION_INDEX) {
-            str_direction[i_str] = c;
-            i_str++;
-        } else if (i_tok == RW_SPEED_INDEX) {
-            str_speed[i_str] = c;
-            i_str++;
-        } else if (i_tok == RW_VALID_INDEX) {
-            str_valid = c;
-            end = 1;
+            if (c == ',') {
+                i_tok++;
+                i_str = 0;
+            } else if (i_tok == RW_DIRECTION_INDEX) {
+                str_direction[i_str] = c;
+                i_str++;
+            } else if (i_tok == RW_SPEED_INDEX) {
+                str_speed[i_str] = c;
+                i_str++;
+            } else if (i_tok == RW_VALID_INDEX) {
+                str_valid = c;
+                end = 1;
+            }
         }
-    }
 
-    wind->valid = str_valid == 'A';
-    printf("direction: %s\nspeed: %s\nvalid: %c\n", str_direction, str_speed, str_valid);
+        wind->valid = str_valid == 'A';
+    } else {
+        puts("string is invalid");
+        wind->valid = 0;
+    }
     return wind;
 }
 
