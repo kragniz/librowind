@@ -135,7 +135,7 @@ void wind_from_iimwv(Wind* wind, char* line) {
         }
     }
 
-    wind->valid = str_valid == 'A';
+    wind->valid = (str_valid == 'A');
     wind->direction = atof(str_direction);
     wind->speed = atof(str_speed);
 }
