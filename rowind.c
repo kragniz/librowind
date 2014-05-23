@@ -19,7 +19,7 @@ typedef struct _wind {
 int set_serial_options(int fd) {
     struct termios tty;
     memset(&tty, 0, sizeof tty);
-    if (tcgetattr (fd, &tty) != 0) {
+    if (tcgetattr(fd, &tty) != 0) {
         return -1;
     }
 
@@ -81,10 +81,23 @@ void get_line(int ro_fd, char* type, char* line) {
     tcflush(ro_fd, TCIFLUSH);
 }
 
+int checksum(char* line) {
+    puts(line);
+    char* ptr = &line[0];
+    char calculated_sum = 0;
+
+    while (*ptr != '\0' && *ptr != '*') {
+        calculated_sum ^= *ptr;
+        ptr++;
+    }
+}
+
 Wind* get_wind(int ro_fd) {
     char line[32] = "";
     Wind* wind = malloc(sizeof(Wind));
     get_line(ro_fd, "IIMWV", line);
+
+    checksum(line);
 
     char str_direction[8] = "";
     char str_speed[8] = "";
