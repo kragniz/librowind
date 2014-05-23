@@ -106,43 +106,51 @@ int checksum(char* line) {
     return !strcmp(original_sum, calculated_sum_hex);
 }
 
+void wind_from_iimwv(Wind* wind, char* line) {
+    char str_direction[8] = "";
+    char str_speed[8] = "";
+    char str_valid = '\0';
+
+    char c;
+    int i_tok = 0;
+    int i_str = 0;
+    int end = 0;
+    int j = 0;
+
+    for (j = 0; j < strlen(line) && !end; j++) {
+        c = line[j];
+
+        if (c == ',') {
+            i_tok++;
+            i_str = 0;
+        } else if (i_tok == RW_DIRECTION_INDEX) {
+            str_direction[i_str] = c;
+            i_str++;
+        } else if (i_tok == RW_SPEED_INDEX) {
+            str_speed[i_str] = c;
+            i_str++;
+        } else if (i_tok == RW_VALID_INDEX) {
+            str_valid = c;
+            end = 1;
+        }
+    }
+
+    wind->valid = str_valid == 'A';
+    wind->direction = atof(str_direction);
+    wind->speed = atof(str_speed);
+}
+
 Wind* get_wind(int ro_fd) {
     char line[32] = "";
     Wind* wind = malloc(sizeof(Wind));
     get_line(ro_fd, "IIMWV", line);
 
     if (checksum(line)) {
-        char str_direction[8] = "";
-        char str_speed[8] = "";
-        char str_valid = '\0';
-
-        char c;
-        int i_tok = 0;
-        int i_str = 0;
-        int end = 0;
-        int j = 0;
-        for (j = 0; j < strlen(line) && !end; j++) {
-            c = line[j];
-
-            if (c == ',') {
-                i_tok++;
-                i_str = 0;
-            } else if (i_tok == RW_DIRECTION_INDEX) {
-                str_direction[i_str] = c;
-                i_str++;
-            } else if (i_tok == RW_SPEED_INDEX) {
-                str_speed[i_str] = c;
-                i_str++;
-            } else if (i_tok == RW_VALID_INDEX) {
-                str_valid = c;
-                end = 1;
-            }
-        }
-
-        wind->valid = str_valid == 'A';
+        wind_from_iimwv(wind, line);
     } else {
-        puts("string is invalid");
         wind->valid = 0;
+        wind->direction = -1;
+        wind->speed = -1;
     }
     return wind;
 }
@@ -151,6 +159,7 @@ int main() {
     int ro_fd = get_rowind_fd("/dev/ttyUSB0");
     while (1) {
         Wind* wind = get_wind(ro_fd);
+        printf("direction: %f speed: %f\n", wind->direction, wind->speed);
         free(wind);
         sleep(1);
     }
