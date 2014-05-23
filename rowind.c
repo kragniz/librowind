@@ -6,6 +6,10 @@
 #include <termios.h>
 #include <unistd.h>
 
+#define RW_DIRECTION_INDEX 1
+#define RW_SPEED_INDEX 3
+#define RW_VALID_INDEX 5
+
 typedef struct _wind {
     double direction;
     double speed;
@@ -79,6 +83,35 @@ Wind* get_wind(int ro_fd) {
     char line[32] = "";
     Wind* wind = malloc(sizeof(Wind));
     get_line(ro_fd, "IIMWV", line);
+    puts(line);
+
+    char str_direction[8] = "";
+    char str_speed[8] = "";
+    char str_valid = '\0';
+
+    char c;
+    int i_tok = 0;
+    int i_str = 0;
+    int end = 0;
+    int j = 0;
+    for (j = 0; j < strlen(line) && !end; j++) {
+        c = line[j];
+
+        if (c == ',') {
+            i_tok++;
+            i_str = 0;
+        } else if (i_tok == RW_DIRECTION_INDEX) {
+            str_direction[i_str] = c;
+            i_str++;
+        } else if (i_tok == RW_SPEED_INDEX) {
+            str_speed[i_str] = c;
+            i_str++;
+        } else if (i_tok == RW_VALID_INDEX) {
+            str_valid = c;
+            end = 1;
+        }
+    }
+    printf("direction: %s\nspeed: %s\nvalid: %c\n", str_direction, str_speed, str_valid);
     return wind;
 }
 
@@ -87,7 +120,7 @@ int main() {
     while (1) {
         Wind* wind = get_wind(ro_fd);
         free(wind);
-        sleep(0.1);
+        sleep(1);
     }
     return 0;
 }
