@@ -17,13 +17,13 @@ typedef struct _wind {
 
 int set_serial_options(int fd) {
     struct termios tty;
-    memset (&tty, 0, sizeof tty);
+    memset(&tty, 0, sizeof tty);
     if (tcgetattr (fd, &tty) != 0) {
         return -1;
     }
 
-    cfsetospeed (&tty, B4800);
-    cfsetispeed (&tty, B4800);
+    cfsetospeed(&tty, B4800);
+    cfsetispeed(&tty, B4800);
 
     tty.c_iflag &= ~IGNBRK;
     tty.c_lflag = 0;
@@ -38,7 +38,7 @@ int set_serial_options(int fd) {
     tty.c_cflag &= ~CSTOPB;
     tty.c_cflag &= ~CRTSCTS;
 
-    if (tcsetattr (fd, TCSANOW, &tty) != 0) {
+    if (tcsetattr(fd, TCSANOW, &tty) != 0) {
         return -2;
     }
     return 0;
@@ -55,6 +55,7 @@ int get_rowind_fd(char* portname) {
 
 void get_line(int ro_fd, char* type, char* line) {
     memset(line, 0, strlen(line));
+
     char c = '\0';
     int type_length = strlen(type);
     int i = 0;
@@ -83,7 +84,6 @@ Wind* get_wind(int ro_fd) {
     char line[32] = "";
     Wind* wind = malloc(sizeof(Wind));
     get_line(ro_fd, "IIMWV", line);
-    puts(line);
 
     char str_direction[8] = "";
     char str_speed[8] = "";
