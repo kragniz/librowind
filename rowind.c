@@ -13,6 +13,7 @@
 typedef struct _wind {
     double direction;
     double speed;
+    int valid;
 } Wind;
 
 int set_serial_options(int fd) {
@@ -111,6 +112,8 @@ Wind* get_wind(int ro_fd) {
             end = 1;
         }
     }
+
+    wind->valid = str_valid == 'A';
     printf("direction: %s\nspeed: %s\nvalid: %c\n", str_direction, str_speed, str_valid);
     return wind;
 }
