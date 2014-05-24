@@ -23,9 +23,10 @@ int main(int argc, char* argv[]) {
                     wind->speed,
                     wind->valid ? "true" : "false"
                   );
+            return wind->valid;
         }
     } else {
         puts("Usage: rowind [test|<device name>]");
+        return 0;
     }
-    return 0;
 }
