@@ -130,9 +130,8 @@ void wind_from_iimwv(Wind* wind, char* line) {
     wind->speed = atof(str_speed);
 }
 
-Wind* get_wind(int ro_fd) {
+void update_wind(int ro_fd, Wind* wind) {
     char line[32] = "";
-    Wind* wind = malloc(sizeof(Wind));
     get_line(ro_fd, "IIMWV", line);
 
     if (checksum(line)) {
@@ -142,5 +141,10 @@ Wind* get_wind(int ro_fd) {
         wind->direction = -1;
         wind->speed = -1;
     }
+}
+
+Wind* get_wind(int ro_fd) {
+    Wind* wind = malloc(sizeof(Wind));
+    update_wind(ro_fd, wind);
     return wind;
 }

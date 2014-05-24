@@ -25,6 +25,11 @@ typedef struct _wind {
 Wind* get_wind(int ro_fd);
 
 /*
+ * update_wind: Updates a Wind struct with new data from the sensor
+ */
+void update_wind(int ro_fd, Wind* wind);
+
+/*
  * get_rowind_fd: Configures the serial port and returns a file descriptor.
  *
  * portname: a string containing the path to the serial device. Probably
