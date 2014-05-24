@@ -3,10 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <termios.h>
-#include <time.h>
 #include <unistd.h>
 
-#include "rowind.h"
+#include "librowind.h"
 
 int set_serial_options(int fd) {
     struct termios tty;
@@ -74,7 +73,6 @@ void get_line(int ro_fd, char* type, char* line) {
 }
 
 int checksum(char* line) {
-    puts(line);
     char* ptr = &line[0];
     char calculated_sum = 0;
 
@@ -145,15 +143,4 @@ Wind* get_wind(int ro_fd) {
         wind->speed = -1;
     }
     return wind;
-}
-
-int main() {
-    int ro_fd = get_rowind_fd("/dev/ttyUSB0");
-    while (1) {
-        Wind* wind = get_wind(ro_fd);
-        printf("direction: %f speed: %f\n", wind->direction, wind->speed);
-        free(wind);
-        sleep(1);
-    }
-    return 0;
 }
