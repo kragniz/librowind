@@ -21,12 +21,20 @@ def get_file_descriptor(rowind_path):
 class Rowind(object):
     def __init__(self, serial_port_name):
         self.port = serial_port_name
-        self.fd = get_file_descriptor(self.port)
-        self.wind = Wind()
-        self.wind_ptr = ctypes.pointer(self.wind)
+        self._fd = get_file_descriptor(self.port)
+        self._wind = Wind()
+
+        self.direction = -1
+        self.speed = -1
 
     def update(self):
-        librowind.update_wind(self.fd, self.wind)
+        librowind.update_wind(self._fd, self._wind)
+
+        if self._wind.valid == 1:
+            self.direction = self._wind.direction
+            self.speed = self._wind.speed
+
+        return (self.direction, self.speed)
 
 if __name__ == '__main__':
     r = Rowind('/dev/ttyUSB0')
