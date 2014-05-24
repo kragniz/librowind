@@ -7,6 +7,8 @@ Installing
 ----------
 
 ```bash
+$ git clone https://github.com/kragniz/librowind.git
+$ cd librowind
 $ make
 $ sudo make install
 ```
