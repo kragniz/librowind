@@ -16,6 +16,28 @@ $ sudo make install
 Usage
 -----
 
+Include librowind:
+```C
+#include "librowind.h"
+```
+Get a file descriptor of the RO Wind's serial port:
+```C
+int ro_fd = get_rowind_fd("/dev/ttyUSB0");
+```
+
+Read data from the sensor:
+```C
+Wind* wind = get_wind(ro_fd);
+```
+
+Use the data:
+```C
+wind->direction // the direction the wind is coming from, 0-359.9
+wind->speed     // the speed of the wind in knots
+wind->valid     // whether the data from the sensor is valid
+```
+
+### Demo client
 Run `rowind` with the name of the serial device the rowind is attached to as
 the first argument.
 
