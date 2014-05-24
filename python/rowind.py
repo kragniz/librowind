@@ -1,14 +1,19 @@
 import ctypes
 from ctypes.util import find_library
 
-librowind = ctypes.cdll.LoadLibrary('/usr/local/lib/librowind.so')
-librowind.get_rowind_fd.argtypes = [ctypes.c_char_p]
-librowind.get_rowind_fd.restype = ctypes.c_int
-
 class Wind(ctypes.Structure):
     _fields_ = [("direction", ctypes.c_double),
                 ("speed", ctypes.c_double),
                 ("valid", ctypes.c_int)]
+
+librowind = ctypes.cdll.LoadLibrary('/usr/local/lib/librowind.so')
+
+wind_pointer = ctypes.POINTER(Wind)
+
+librowind.get_rowind_fd.argtypes = [ctypes.c_char_p]
+librowind.get_rowind_fd.restype = ctypes.c_int
+
+librowind.update_wind.argtypes = [ctypes.c_int, wind_pointer]
 
 def get_file_descriptor(rowind_path):
     return librowind.get_rowind_fd(rowind_path)
@@ -20,6 +25,9 @@ class Rowind(object):
         self.wind = Wind()
         self.wind_ptr = ctypes.pointer(self.wind)
 
+    def update(self):
+        librowind.update_wind(self.fd, self.wind)
+
 if __name__ == '__main__':
-    print get_file_descriptor('/dev/ttyUSB0')
     r = Rowind('/dev/ttyUSB0')
+    r.update()
