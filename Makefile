@@ -27,3 +27,4 @@ install: rowind librowind.so.1.0 librowind.h
 	install -m 0644 librowind.h $(PREFIX)/include
 	ln -sf $(PREFIX)/lib/librowind.so.1 $(PREFIX)/lib/librowind.so
 	ldconfig -v -n $(PREFIX)/lib
+	cd python; python setup.py install
