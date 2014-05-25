@@ -3,6 +3,8 @@ librowind
 
 Read data from the [RO Wind](http://www.busse-yachtshop.de/pdf/ROWind.pdf) wind sensor.
 
+Includes a C library along with a Python wrapper.
+
 
 Installing
 ----------
@@ -17,6 +19,8 @@ $ sudo make install
 
 Usage
 -----
+
+### With C
 
 Include librowind:
 ```C
@@ -38,6 +42,28 @@ Use the data:
 wind->direction // the direction the wind is coming from, 0-359.9
 wind->speed     // the speed of the wind in knots
 wind->valid     // whether the data from the sensor is valid
+```
+
+### With Python
+
+Import the module:
+```python
+import rowind
+```
+
+Create an instance of a rowind object:
+```python
+wind = rowind.Rowind('/dev/ttyUSB0')
+```
+Read from the sensor:
+```python
+wind.update()
+```
+
+Use the values:
+```python
+print 'the wind is comming from', wind.direction
+print 'with a speed of', wind.speed, 'knots'
 ```
 
 
