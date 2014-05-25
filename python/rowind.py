@@ -1,19 +1,18 @@
 import ctypes
 from ctypes.util import find_library
 
-class Wind(ctypes.Structure):
-    _fields_ = [("direction", ctypes.c_double),
-                ("speed", ctypes.c_double),
-                ("valid", ctypes.c_int)]
-
 librowind = ctypes.cdll.LoadLibrary('/usr/local/lib/librowind.so')
 
 wind_pointer = ctypes.POINTER(Wind)
 
 librowind.get_rowind_fd.argtypes = [ctypes.c_char_p]
 librowind.get_rowind_fd.restype = ctypes.c_int
-
 librowind.update_wind.argtypes = [ctypes.c_int, wind_pointer]
+
+class Wind(ctypes.Structure):
+    _fields_ = [("direction", ctypes.c_double),
+                ("speed", ctypes.c_double),
+                ("valid", ctypes.c_int)]
 
 def get_file_descriptor(rowind_path):
     return librowind.get_rowind_fd(rowind_path)
@@ -28,6 +27,7 @@ class Rowind(object):
         self.speed = -1
 
     def update(self):
+        '''Read from the sensor and update the direction and speed'''
         librowind.update_wind(self._fd, self._wind)
 
         if self._wind.valid == 1:
