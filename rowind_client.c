@@ -5,9 +5,16 @@
 
 #include "librowind.h"
 
+void print_usage() {
+    puts("Usage: rowind [test|<device name>]");
+}
+
 int main(int argc, char* argv[]) {
     if (argc > 1) {
-        if (!strcmp(argv[1], "test")) {
+        if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) {
+            print_usage();
+            puts("rowind_client: Prints out the current readings from the RO Wind sensor");
+        } else if (!strcmp(argv[1], "test")) {
             int ro_fd = get_rowind_fd("/dev/ttyUSB0");
             while (1) {
                 Wind* wind = get_wind(ro_fd);
@@ -26,7 +33,7 @@ int main(int argc, char* argv[]) {
             return wind->valid;
         }
     } else {
-        puts("Usage: rowind [test|<device name>]");
-        return 0;
+        print_usage();
     }
+    return 0;
 }
