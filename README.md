@@ -67,8 +67,7 @@ print 'with a speed of', wind.speed, 'knots'
 ```
 
 
-Demo client usage
------------
+### With demo client
 
 Run `rowind` with the name of the serial device the rowind is attached to as
 the first argument.
@@ -77,3 +76,13 @@ the first argument.
 $ rowind /dev/ttyUSB0
 {"direction": 95.000000, "speed": 6.700000, "valid": true}
 ```
+
+License
+-------
+
+Librowind is free software: you can redistribute it and/or modify it under the
+terms of the GNU Lesser General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+See [COPYING](COPYING) for more information.
